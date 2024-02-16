@@ -35,7 +35,6 @@ export const useAuth = () => {
     }), [authenticate, success, error, complete, setComplete])
 }
 
-
 export const useAttendanceForm = () => {
     const [submitting, setIsSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -55,32 +54,25 @@ export const useAttendanceForm = () => {
     }, [setFields]);
 
     const submit = useCallback(async (type: SubmissionType) => {
-        console.log('...submitting ' + type)
+        if(error) setError('');
         setIsSubmitting(true);
-        console.log('...caching fields')
         cacheUserData(fields);
-        try {
-            console.log('...sending to API')
-            const { success } = await httpClient<{ success: boolean }>('/api/attendance/log-entry', {
-                method: 'POST',
-                body: JSON.stringify({ fields, type })
-            })
-            if (!success) throw Error('There was an issue processing the action, please see the administrator');
-            setSuccess(true);
-            setIsSubmitting(false);
-            cacheAccessToken(getAccessTokenFromUrl() as string)
-
-        } catch (err) {
-            console.error(err);
-            setError('There was a problem logging your time, please scan again');
-            setIsSubmitting(false)
-        }
+        const { success } = await httpClient<{ success: boolean }>('/api/attendance/log-entry', {
+            method: 'POST',
+            body: JSON.stringify({ fields, type })
+        })
+        if (!success) throw Error('There was an issue processing the action, please see the administrator');
+        setSuccess(true);
+        setIsSubmitting(false);
+        cacheAccessToken(getAccessTokenFromUrl() as string)
     }, [fields, setIsSubmitting, setError, setSuccess])
 
     return useMemo(() => ({
         fields,
         updateField,
         submitting,
+        setIsSubmitting,
+        setError,
         success,
         error,
         disableFields,
