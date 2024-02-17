@@ -17,8 +17,9 @@
 			"Postman.postman-for-vscode",
 			"github.vscode-github-actions",
 			"genieai.chatgpt-vscode",
-			"GitHub.vscode-pull-request-github"
+			"GitHub.vscode-pull-request-github",
+			"yandeu.five-server"
 		  ]
 		}
-	  },
+	  }
 }
