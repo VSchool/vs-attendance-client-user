@@ -10,3 +10,5 @@ jobs:
           node-version: "20"
       - run: npm install
       - run: npm run deploy -- ./dist --domain https://qa-vschool-attendance-client-user.surge.sh  --token ${{ secrets.SURGE_TOKEN }}
+        env:
+          VITE_BASE_URL: https://qa-vs-attendance-api.onrender.com

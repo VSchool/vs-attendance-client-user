@@ -11,4 +11,4 @@ jobs:
       - run: npm install
       - run: npm t
         env:
-          DOTENV_KEY: ${{ secrets.DOTENV_KEY }}
+          VITE_BASE_URL: https://qa-vs-attendance-api.onrender.com
