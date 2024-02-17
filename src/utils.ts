@@ -11,3 +11,10 @@ export const cacheUserData = (fields: AttendanceFormFields) => { localStorage.se
 
 export const getCachedAccessToken = () => localStorage.getItem(ACCESS_TOKEN_CACHE_KEY);
 export const cacheAccessToken = (token: string) => localStorage.setItem(ACCESS_TOKEN_CACHE_KEY, token);
+
+export const bypassTimeEntryProcess = () => {
+    // after form submission, token is cached. If page is visited again with the same access token (which has a short expiration date), direct user that their time has been logged successfully until a new token has been generated 
+    const urlParamAccessToken = getAccessTokenFromUrl();
+    const cachedToken = getCachedAccessToken();
+    return !!cachedToken && (urlParamAccessToken === cachedToken)
+}

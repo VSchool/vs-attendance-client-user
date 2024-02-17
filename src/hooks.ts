@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react"
 import { httpClient } from "./http";
 import { AttendanceFormFields, SubmissionType } from "./types";
-import { cacheAccessToken, cacheUserData, getAccessTokenFromUrl, getCachedAccessToken, getCachedUserDate } from "./utils";
+import { cacheAccessToken, cacheUserData, getAccessTokenFromUrl, getCachedUserDate } from "./utils";
 
 export const useAuth = () => {
     const [success, setSuccess] = useState(false);
@@ -17,22 +17,11 @@ export const useAuth = () => {
         }
     }, [])
 
-    const bypass = useMemo(() => {
-        // after form submission, token is cached. If page is visited again with the same access token, ignore it
-        const urlParamAccessToken = getAccessTokenFromUrl();
-        const cachedToken = getCachedAccessToken();
-        return cachedToken && urlParamAccessToken === cachedToken
-    }, [])
-
-    const [complete, setComplete] = useState(bypass);
-
     return useMemo(() => ({
         authenticate,
         success,
         error,
-        complete,
-        setComplete
-    }), [authenticate, success, error, complete, setComplete])
+    }), [authenticate, success, error])
 }
 
 export const useAttendanceForm = () => {
@@ -41,7 +30,7 @@ export const useAttendanceForm = () => {
     const [error, setError] = useState('');
 
     const cache = getCachedUserDate();
-    const disableFields = !!Object.keys(cache).length;
+    const disableFields = !error && (!!Object.keys(cache).length || submitting);
 
     const [fields, setFields] = useState<AttendanceFormFields>({
         firstName: cache.firstName || '',
@@ -61,7 +50,7 @@ export const useAttendanceForm = () => {
             method: 'POST',
             body: JSON.stringify({ fields, type })
         })
-        if (!success) throw Error('There was an issue processing the action, please see the administrator');
+        if (!success) throw Error('There was an issue processing logging your entry, please see the administrator');
         setSuccess(true);
         setIsSubmitting(false);
         cacheAccessToken(getAccessTokenFromUrl() as string)

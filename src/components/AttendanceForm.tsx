@@ -36,15 +36,15 @@ export const AttendanceForm: React.FC<AttendanceFormProps> = ({ onSuccess }) => 
             </div>
             <div>
                 <label htmlFor="first-name">First Name</label>
-                <input id='first-name' type="text" name='firstName' value={fields.firstName} onChange={handleChange} disabled={!error && disableFields} required />
+                <input id='first-name' type="text" name='firstName' value={fields.firstName} onChange={handleChange} disabled={disableFields} required />
             </div>
             <div>
                 <label htmlFor="last-name">Last Name</label>
-                <input id='last-name' type="text" name='lastName' value={fields.lastName} onChange={handleChange} disabled={!error && disableFields} required />
+                <input id='last-name' type="text" name='lastName' value={fields.lastName} onChange={handleChange} disabled={disableFields} required />
             </div>
             <div>
                 <label htmlFor="email">Email</label>
-                <input id='email' type="email" name='email' value={fields.email} onChange={handleChange} disabled={!error && disableFields} required />
+                <input id='email' type="email" name='email' value={fields.email} onChange={handleChange} disabled={disableFields} required />
             </div>
 
             <button type='submit' name={SubmissionType.CheckIn}>Check In</button>

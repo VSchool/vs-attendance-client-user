@@ -12,7 +12,11 @@ dist
 dist-ssr
 *.local
 
+# env
 .env
+.env.qa
+.env.ci
+.env.keys
 
 # Editor directories and files
 .vscode/*
