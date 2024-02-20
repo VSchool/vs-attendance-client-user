@@ -6,10 +6,10 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { AttendanceForm } from "./AttendanceForm";
-import { httpClient } from "../__mocks__/http";
+import { httpClient } from "../../__mocks__/http";
 
 const localStorageGetItemMock = vi.spyOn(Storage.prototype, "getItem");
-vi.mock("../http");
+vi.mock("../../http");
 
 const cacheJSON = `{"firstName": "test","lastName": "test", "email":"test@test.com"}`;
 
@@ -56,7 +56,7 @@ describe("<AttendanceForm/> component", () => {
       fireEvent.click(checkinBtn);
     });
     expect(await screen.findByTestId("form-submitting")).toBeInstanceOf(
-      HTMLParagraphElement
+      HTMLElement
     );
   });
 
@@ -101,7 +101,7 @@ describe("<AttendanceForm/> component", () => {
       fireEvent.click(checkinBtn);
     });
     expect(await screen.findByTestId("form-error")).toBeInstanceOf(
-      HTMLParagraphElement
+      HTMLElement
     );
     const firstNameInput = (await screen.findByTestId(
       "first-name"

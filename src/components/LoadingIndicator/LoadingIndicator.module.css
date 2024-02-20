@@ -1,0 +1,22 @@
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+@keyframes loading {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-icon {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  animation: loading 1.2s ease-in-out infinite;
+}
