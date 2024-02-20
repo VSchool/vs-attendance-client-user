@@ -1,0 +1,1 @@
+export const httpClient = vi.fn(() => Promise.resolve({ success: true }));

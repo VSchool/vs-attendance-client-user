@@ -15,19 +15,19 @@ const App = () => {
   }, [authenticate, setIsLoading, complete])
 
   if (complete) return (
-    <div>Time Logged Successfully</div>
+    <div data-testid='app-success'>Time Logged Successfully</div>
   )
 
   if (loading) return (
-    <div>...loading</div>
+    <div data-testid='app-loading'>...loading</div>
   )
 
   if (error) return (
-    <div>{error}</div>
+    <div data-testid='app-error'>{error}</div>
   )
 
   return (
-    <div>
+    <div data-testid="app-loaded">
       <AttendanceForm onSuccess={() => setComplete(true)} />
     </div>
   )
