@@ -1,60 +1,113 @@
-import React, { ChangeEvent, FormEvent, useCallback } from "react"
+import React, { ChangeEvent, FormEvent, useCallback } from "react";
 import { useAttendanceForm } from "../hooks";
 import { AttendanceFormFields, SubmissionType } from "../types";
 
 interface AttendanceFormProps {
-    onSuccess: () => void;
+  onSuccess: () => void;
 }
 
-export const AttendanceForm: React.FC<AttendanceFormProps> = ({ onSuccess }) => {
+export const AttendanceForm: React.FC<AttendanceFormProps> = ({
+  onSuccess,
+}) => {
+  const {
+    submit,
+    fields,
+    updateField,
+    submitting,
+    disableFields,
+    setError,
+    setIsSubmitting,
+    error,
+  } = useAttendanceForm();
 
-    const { submit, fields, updateField, submitting, disableFields, setError, setIsSubmitting, error } = useAttendanceForm();
+  const handleSubmit = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const submitter = (e.nativeEvent as SubmitEvent)
+        .submitter as HTMLButtonElement;
+      setIsSubmitting(true);
+      try {
+        await submit(submitter.name as SubmissionType);
+        onSuccess();
+      } catch (err) {
+        console.error(err);
+        setError("There was a problem logging your time, please scan again");
+      }
+      setIsSubmitting(false);
+    },
+    [submit, onSuccess, setError, setIsSubmitting]
+  );
 
-    const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
-        setIsSubmitting(true);
-        try {
-            await submit(submitter.name as SubmissionType);
-            onSuccess();
-        } catch (err) {
-            console.error(err)
-            setError('There was a problem logging your time, please scan again');
-        }
-        setIsSubmitting(false)
-    }, [submit, onSuccess, setError])
+  const handleChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      updateField(name as keyof AttendanceFormFields, value);
+    },
+    [updateField]
+  );
 
-    const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        updateField(name as keyof AttendanceFormFields, value)
-    }, [updateField])
-   
-    return (
-        <form onSubmit={handleSubmit} name='attendance-form'>
-            <div>
-                Timestamp: <time>{new Date().toLocaleString()}</time>
-            </div>
-            <div>
-                <label htmlFor="first-name">First Name</label>
-                <input id='first-name' type="text" name='firstName' value={fields.firstName} onChange={handleChange} disabled={disableFields} required />
-            </div>
-            <div>
-                <label htmlFor="last-name">Last Name</label>
-                <input id='last-name' type="text" name='lastName' value={fields.lastName} onChange={handleChange} disabled={disableFields} required />
-            </div>
-            <div>
-                <label htmlFor="email">Email</label>
-                <input id='email' type="email" name='email' value={fields.email} onChange={handleChange} disabled={disableFields} required />
-            </div>
+  return (
+    <form
+      onSubmit={handleSubmit}
+      name="attendance-form"
+      data-testid="attendance-form"
+    >
+      <div>
+        Timestamp: <time>{new Date().toLocaleString()}</time>
+      </div>
+      <div>
+        <label htmlFor="first-name">First Name</label>
+        <input
+          data-testid="first-name"
+          id="first-name"
+          type="text"
+          name="firstName"
+          value={fields.firstName}
+          onChange={handleChange}
+          disabled={disableFields}
+          required
+        />
+      </div>
+      <div>
+        <label htmlFor="last-name">Last Name</label>
+        <input
+          data-testid="last-name"
+          id="last-name"
+          type="text"
+          name="lastName"
+          value={fields.lastName}
+          onChange={handleChange}
+          disabled={disableFields}
+          required
+        />
+      </div>
+      <div>
+        <label htmlFor="email">Email</label>
+        <input
+          data-testid="email"
+          id="email"
+          type="email"
+          name="email"
+          value={fields.email}
+          onChange={handleChange}
+          disabled={disableFields}
+          required
+        />
+      </div>
 
-            <button type='submit' name={SubmissionType.CheckIn}>Check In</button>
-            <button type='submit' name={SubmissionType.CheckOut}>Check Out</button>
-            {error && (
-                <p>{error}</p>
-            )}
-            {submitting && (
-                <p>...submitting</p>
-            ) }
-        </form>
-    )
-}
+      <button data-testid='check-in' type="submit" name={SubmissionType.CheckIn} disabled={submitting}>
+        Check In
+      </button>
+      <button
+        type="submit"
+        data-testid='check-out'
+        name={SubmissionType.CheckOut}
+        disabled={submitting}
+      >
+        Check Out
+      </button>
+      {error && <p data-testid='form-error'>{error}</p>}
+      {submitting && <p data-testid='form-submitting'>...submitting</p>}
+    </form>
+  );
+};

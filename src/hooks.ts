@@ -54,7 +54,7 @@ export const useAttendanceForm = () => {
         setSuccess(true);
         setIsSubmitting(false);
         cacheAccessToken(getAccessTokenFromUrl() as string)
-    }, [fields, setIsSubmitting, setError, setSuccess])
+    }, [fields, setIsSubmitting, setError, setSuccess, error])
 
     return useMemo(() => ({
         fields,
