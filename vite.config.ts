@@ -9,6 +9,7 @@ export default defineConfig({
     globals: true,
     setupFiles: "./__test__/setup.ts",
     watch: false,
-    clearMocks: true
+    clearMocks: true,
+    name: 'VS Attendance User'
   }
 })

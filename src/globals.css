@@ -3,12 +3,30 @@
   margin: 0;
 }
 
+.root-layout {
+  padding: 3rem 2rem;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+button {
+  height: 2.5rem;
+  background-color: rgb(61, 61, 61);
+  color: white;
+}
+
 .typography {
   font-family: "IBM Plex Mono", serif;
 
   &.text-center {
     text-align: center;
   }
+
   &.body-lg {
     font-size: 2rem;
   }

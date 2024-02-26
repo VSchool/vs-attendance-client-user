@@ -11,6 +11,6 @@ afterEach(() => {
 
 Object.defineProperty(window, 'location', {
     writable: true,
-    value: { search: '' },
+    value: { search: '', href: "/", pathname: '/' },
 });
 

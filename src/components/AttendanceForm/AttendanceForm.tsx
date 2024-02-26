@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import styles from "./AttendanceForm.module.css";
 import { LoadingIndicator } from "../LoadingIndicator";
 import errorIcon from "../../assets/error-icon.png";
+import { Link } from "@tanstack/react-router";
 
 interface AttendanceFormProps {
   onSuccess: () => void;
@@ -150,10 +151,12 @@ export const AttendanceForm: React.FC<AttendanceFormProps> = ({
           data-testid="form-error"
           className={styles["attendance-form-footer"]}
         >
-          <img src={errorIcon} alt="form-error-msg" style={{width: 24, height:24 }}/>
-          <span className="typography body-sm text-center">
-            {error}
-          </span>
+          <img
+            src={errorIcon}
+            alt="form-error-msg"
+            style={{ width: 24, height: 24 }}
+          />
+          <span className="typography body-sm text-center">{error}</span>
         </footer>
       )}
       {submitting && (
@@ -161,8 +164,11 @@ export const AttendanceForm: React.FC<AttendanceFormProps> = ({
           data-testid="form-submitting"
           className={styles["attendance-form-footer"]}
         >
-          <LoadingIndicator size={24}/>
+          <LoadingIndicator size={24} />
           <span className="typography body">Submitting...</span>
+          <Link to="/">
+            <button>View Attendance History</button>
+          </Link>
         </footer>
       )}
     </form>
