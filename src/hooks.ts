@@ -1,15 +1,14 @@
 import { useCallback, useMemo, useState } from "react"
-import { httpClient } from "./http";
-import { AttendanceFormFields, SubmissionType } from "./types";
-import { cacheAccessToken, cacheUserData, getAccessTokenFromUrl, getCachedUserDate } from "./utils";
+import { AttendanceFormFields, Entry, SubmissionType } from "./types";
+import { cacheAccessToken, cacheUserData, getAccessTokenFromUrl, getCachedUserData } from "./utils";
+import { getAttendanceLogsForUser, logEntry, validateAccessToken } from "./client";
 
 export const useAuth = () => {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState('');
     const authenticate = useCallback(async () => {
         try {
-            const { success } = await httpClient<{ success: boolean }>('/api/qr-code/validate');
-            if (!success) throw Error('Unauthorized')
+            await validateAccessToken()
             setSuccess(true)
         } catch (err) {
             console.error(err);
@@ -29,13 +28,13 @@ export const useAttendanceForm = () => {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState('');
 
-    const cache = getCachedUserDate();
-    const disableFields = !error && (!!Object.keys(cache).length || submitting);
+    const cache = getCachedUserData();
+    const disableFields = !error && (!!cache || submitting);
 
-    const [fields, setFields] = useState<AttendanceFormFields>({
-        firstName: cache.firstName || '',
-        lastName: cache.lastName || '',
-        email: cache.email || '',
+    const [fields, setFields] = useState<AttendanceFormFields>(cache || {
+        firstName: '',
+        lastName: '',
+        email: '',
     });
 
     const updateField = useCallback((k: keyof AttendanceFormFields, value: string) => {
@@ -43,14 +42,10 @@ export const useAttendanceForm = () => {
     }, [setFields]);
 
     const submit = useCallback(async (type: SubmissionType) => {
-        if(error) setError('');
+        if (error) setError('');
         setIsSubmitting(true);
         cacheUserData(fields);
-        const { success } = await httpClient<{ success: boolean }>('/api/attendance/log-entry', {
-            method: 'POST',
-            body: JSON.stringify({ fields, type })
-        })
-        if (!success) throw Error('There was an issue processing logging your entry, please see the administrator');
+        await logEntry(fields, type);
         setSuccess(true);
         setIsSubmitting(false);
         cacheAccessToken(getAccessTokenFromUrl() as string)
@@ -67,4 +62,24 @@ export const useAttendanceForm = () => {
         disableFields,
         submit
     }), [fields, updateField, submitting, success, error, submit, disableFields])
+}
+
+export const useAttendanceLogs = () => {
+    const cache = useMemo(() => getCachedUserData(), []);
+    const [error, setError] = useState(cache?.email ? '' : 'Unable to retrieve entries');
+    const [entries, setEntries] = useState<Entry[]>([]);
+
+    const getEntries = useCallback(async () => {
+        if (error) setError('');
+        const { entries } = await getAttendanceLogsForUser(cache?.email || '');
+        setEntries(entries);
+    }, [error, setError, cache])
+
+    return useMemo(() => ({
+        error,
+        setError,
+        entries,
+        getEntries,
+    }), [error, setError, getEntries, entries])
+
 }

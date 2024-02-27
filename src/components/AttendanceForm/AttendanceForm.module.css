@@ -5,12 +5,16 @@
 }
 
 .attendance-form-header {
-    padding: .5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 1.5rem 0;
 }
 
 .attendance-form-fieldset {
     padding: .5rem 0;
 }
+
 .attendance-form-field {
     display: flex;
     flex-direction: column;
@@ -31,9 +35,6 @@
 
     button {
         flex: 1;
-        height: 2.5rem;
-        background-color: rgb(61, 61, 61);
-        color:white;
     }
 }
 
