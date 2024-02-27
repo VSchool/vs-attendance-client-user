@@ -28,7 +28,7 @@ export const groupEntriesByWeek = (entries: Entry[]) => {
     const graph: Record<Entry['week_of'], Entry[]> = {};
     entries.forEach(entry => graph[entry.week_of] ? graph[entry.week_of].push(entry) : graph[entry.week_of] = [entry]);
     return Object.keys(graph).map(k => {
-        const entries = graph[k].map(entry => [
+        const entries = graph[k].sort((a, b) => new Date(b.start).getTime() - new Date(a.start).getTime()).map(entry => [
             new Date(entry.start),
             entry.end ? new Date(entry.end) : null,
             entry.end ? fns.differenceInHours(new Date(entry.end), new Date(entry.start)) : 0]);
