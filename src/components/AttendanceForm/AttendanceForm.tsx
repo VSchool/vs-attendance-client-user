@@ -13,6 +13,7 @@ import styles from "./AttendanceForm.module.css";
 import { LoadingIndicator } from "../LoadingIndicator";
 import errorIcon from "../../assets/error-icon.png";
 import { Link } from "@tanstack/react-router";
+import { getCachedUserData } from "../../utils";
 
 interface AttendanceFormProps {
   onSuccess: () => void;
@@ -36,6 +37,8 @@ export const AttendanceForm: React.FC<AttendanceFormProps> = ({
   const formattedDate = useMemo(() => {
     return format(currentTime, "cccc, MMM M p");
   }, [currentTime]);
+
+  const showLinkToLogHistory = useMemo(() => !!getCachedUserData()?.email, []);
 
   const handleSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
@@ -77,6 +80,11 @@ export const AttendanceForm: React.FC<AttendanceFormProps> = ({
     >
       <header className={styles["attendance-form-header"]}>
         <code>{formattedDate}</code>
+        {showLinkToLogHistory && (
+          <Link to="/">
+            <button>View Attendance</button>
+          </Link>
+        )}
       </header>
       <div className={styles["attendance-form-fieldset"]}>
         <div className={styles["attendance-form-field"]}>
@@ -146,6 +154,7 @@ export const AttendanceForm: React.FC<AttendanceFormProps> = ({
           Check Out
         </button>
       </div>
+
       {error && (
         <footer
           data-testid="form-error"
@@ -166,9 +175,6 @@ export const AttendanceForm: React.FC<AttendanceFormProps> = ({
         >
           <LoadingIndicator size={24} />
           <span className="typography body">Submitting...</span>
-          <Link to="/">
-            <button>View Attendance History</button>
-          </Link>
         </footer>
       )}
     </form>

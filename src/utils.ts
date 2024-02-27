@@ -1,12 +1,17 @@
 import { ACCESS_TOKEN_CACHE_KEY, ACCESS_TOKEN_URL_PARAM_KEY, USER_CACHE_KEY } from "./constants";
-import { AttendanceFormFields } from "./types";
+import { AttendanceFormFields, Entry } from "./types";
+import * as  fns from 'date-fns';
 
 export const getAccessTokenFromUrl = () => {
     const params = new URLSearchParams(location.search);
     return params.get(ACCESS_TOKEN_URL_PARAM_KEY)
 }
 
-export const getCachedUserDate = () => JSON.parse(localStorage.getItem(USER_CACHE_KEY) || '{}');
+export const getCachedUserData = (): null | AttendanceFormFields => {
+    const cache = localStorage.getItem(USER_CACHE_KEY);
+    if (cache) return JSON.parse(cache);
+    return null
+}
 export const cacheUserData = (fields: AttendanceFormFields) => { localStorage.setItem(USER_CACHE_KEY, JSON.stringify(fields)) }
 
 export const getCachedAccessToken = () => localStorage.getItem(ACCESS_TOKEN_CACHE_KEY);
@@ -17,4 +22,22 @@ export const bypassTimeEntryProcess = () => {
     const urlParamAccessToken = getAccessTokenFromUrl();
     const cachedToken = getCachedAccessToken();
     return !!cachedToken && (urlParamAccessToken === cachedToken)
+}
+
+export const groupEntriesByWeek = (entries: Entry[]) => {
+    const graph: Record<Entry['week_of'], Entry[]> = {};
+    entries.forEach(entry => graph[entry.week_of] ? graph[entry.week_of].push(entry) : graph[entry.week_of] = [entry]);
+    return Object.keys(graph).map(k => {
+        const entries = graph[k].map(entry => [
+            new Date(entry.start),
+            entry.end ? new Date(entry.end) : null,
+            entry.end ? fns.differenceInHours(new Date(entry.end), new Date(entry.start)) : 0]);
+        return {
+            week_of: new Date(k),
+            entries,
+            totals: entries.reduce((aggregate, entry) => {
+                return ['', '', aggregate[2] as number + (entry[2] as number)]
+            }, ['', '', 0])
+        }
+    }).sort((a, b) => b.week_of.getTime() - a.week_of.getTime())
 }

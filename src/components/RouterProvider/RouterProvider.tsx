@@ -9,6 +9,7 @@ import { App } from "../App";
 import { Success } from "../Success";
 import { ErrorPage } from "../ErrorPage";
 import { RootLayout } from "../RootLayout";
+import { AttendanceHistoryPage } from "../AttendanceHistoryPage";
 
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -16,7 +17,7 @@ const rootRoute = createRootRoute({
 
 const indexRoute = createRoute({
   path: "/",
-  component: () => <div>history</div>,
+  component: AttendanceHistoryPage,
   getParentRoute: () => rootRoute,
 });
 
