@@ -41,7 +41,10 @@ export const AttendanceHistoryPage: React.FC = () => {
         </p>
       );
     return (
-      <div data-testid="attendance-history-logs">
+      <div
+        data-testid="attendance-history-logs"
+        className={styles["attendance-history-logs"]}
+      >
         {groupEntriesByWeek(entries).map((week) => {
           return (
             <div className="typography" key={week.week_of.toISOString()}>
@@ -49,25 +52,29 @@ export const AttendanceHistoryPage: React.FC = () => {
               <table className={styles["attendance-history-log-table"]}>
                 <thead>
                   <tr>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>Hours</th>
+                    <th align="left">Start</th>
+                    <th align="left">End</th>
+                    <th align="left">Hours</th>
                   </tr>
                 </thead>
                 <tbody>
                   {week.entries.map(([start, end, duration]) => (
                     <tr key={(start as Date).toString()}>
-                      <td>{fns.format(start as Date, "M/dd p")}</td>
-                      <td>{end ? fns.format(end as Date, "M/dd p") : "N/A"}</td>
-                      <td align="center">{duration as number}</td>
+                      <td>{fns.format(start as Date, "EEEEEE M/dd p")}</td>
+                      <td>
+                        {end ? fns.format(end as Date, "EEEEEE M/dd p") : "N/A"}
+                      </td>
+                      <td align="left">{duration as number}</td>
                     </tr>
                   ))}
+                </tbody>
+                <tfoot>
                   <tr>
                     <td></td>
                     <td></td>
-                    <td>Total: {week.totals[2]}</td>
+                    <td align="left">Total: {week.totals[2]}</td>
                   </tr>
-                </tbody>
+                </tfoot>
               </table>
             </div>
           );
