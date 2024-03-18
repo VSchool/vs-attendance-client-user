@@ -31,7 +31,7 @@ export const groupEntriesByWeek = (entries: Entry[]) => {
         const entries = graph[k].sort((a, b) => new Date(b.start).getTime() - new Date(a.start).getTime()).map(entry => [
             new Date(entry.start),
             entry.end ? new Date(entry.end) : null,
-            entry.end ? fns.differenceInHours(new Date(entry.end), new Date(entry.start)) : 0]);
+            entry.end ? +(fns.differenceInMinutes(new Date(entry.end), new Date(entry.start))/60).toFixed(2) : 0]);
         return {
             week_of: new Date(k),
             entries,
