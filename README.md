@@ -11,7 +11,8 @@ Web app for allowing students to clock in/out of campus using QR code. User subm
 npm i
 
 # create .env files (see .env.template file for variable values)
-cat .env.template >> .env
+cat .env.template >> .env #dev 
+cat .env.template >> .env.ci #prod
 
 #run dev server
 npm run dev
